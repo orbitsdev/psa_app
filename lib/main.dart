@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:psa_app/features/authentication/login/login_screen.dart';
+import 'package:psa_app/features/authentication/login/map_screen.dart';
 
 void main() {
   runApp(const PSA());
@@ -19,9 +20,10 @@ class _PSAState extends State<PSA> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  LoginScreen(),
+      home:  MapScreen(),
       getPages: [
-        GetPage(name: '/login', page: ()=>  LoginScreen())
+        GetPage(name: '/login', page: ()=>  LoginScreen()),
+        GetPage(name: '/map', page: ()=>  MapScreen())
       ],
 
     );
