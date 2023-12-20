@@ -1,11 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-  import 'package:geolocator/geolocator.dart';
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  // const MapScreen({super.key});
+
+
 
   @override
   State<MapScreen> createState() => MapScreenState();
@@ -16,6 +20,9 @@ class MapScreenState extends State<MapScreen> {
   LatLng? currentPosition;
   Set<Marker> markerSet = {};
   Marker? marker;
+
+  LatLng? selectedLocation;
+
   // Set<Marker>? markers;
 
   final Completer<GoogleMapController> _controller =
@@ -49,6 +56,7 @@ class MapScreenState extends State<MapScreen> {
 
     setState(() {
       markerSet.add(marker as Marker);
+      selectedLocation = location;
     });
     moveCamera(location);
   }
@@ -182,6 +190,20 @@ Future<bool> locationPermision() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          ElevatedButton(onPressed: (){
+            if(selectedLocation != null) {
+            // widget.setLocation!(selectedLocation); 
+
+            Get.back(result: selectedLocation);
+
+            }else{
+                          Get.back();
+            }
+          }, child: Icon(Icons.save))
+        ],
+      ),
       body: isMapReady   == false  ? Center(child: const CircularProgressIndicator(),) : GoogleMap(
         onTap: (location) => setMarker(location),
         markers: markerSet,

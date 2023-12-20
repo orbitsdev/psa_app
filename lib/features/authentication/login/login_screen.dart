@@ -2,8 +2,15 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:intl/intl.dart';
+import 'package:psa_app/features/authentication/login/map_screen.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:psa_app/widgets/subtitle_text.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -14,7 +21,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 
 
+  final _formKey = GlobalKey<FormBuilderState>();
 
+  LatLng? selectedLocation;
   String? resultData;
 
   final TextEditingController firstNameController = TextEditingController();
@@ -85,9 +94,55 @@ class _LoginScreenState extends State<LoginScreen> {
   //   // }
   // }
 
+
+  void submitForm(){
+       _formKey.currentState?.saveAndValidate();
+            _formKey.currentState?.validate();
+             var formValue = _formKey.currentState?.value;
+         final data = {
+        'first_name': formValue?['first_name'],
+        'last_name': formValue?['last_name'],
+        'middle_name':formValue?['middle_name'],
+        'date_of_birth':formValue?['date_of_birth'],
+        'place_of_birth_city':formValue?['place_of_birth_city'],
+        'place_of_birth_province':formValue?['place_of_birth_province'],
+        'place_of_birth_country': formValue?['place_of_birth_country'],
+        'father_first_name': formValue?['father_first_name'],
+        'father_last_name':formValue?['father_last_name'],
+        'father_middle_name':formValue?['father_middle_name'],
+        'mother_first_name':formValue?['mother_first_name'],
+        'mother_last_name': formValue?['mother_last_name'],
+        'mother_middle_name':formValue?['mother_middle_name'],
+        'latitude': formValue?['latitude'] != null ? double.parse(formValue!['latitude'].toString()) : 0,
+        'longitude': formValue?['longitude'] != null ? double.parse(formValue!['longitude'].toString()) : 0,
+        'place_id': formValue?['place_id'],
+        'image': formValue?['first_name'],
+      };
+
+      print(data);
+            // print(_formKey.currentState);
+
+            // debugPrint(_formKey.currentState?.value.toString());
+      
+            // On another side, can access all field values without saving form with instantValues
+            // debugPrint(_formKey.currentState?.instantValue.toString());
+  }
    @override
   void initState() {
     super.initState();
+  }
+
+  
+  
+
+  void setLocation(LatLng position) async {
+
+    print('POSITION TOP');
+    print(position);
+    print('-________________________________');
+
+    longitudeController.text = position.longitude.toString();
+    latitudeController.text = position.latitude.toString();
   }
 
  
@@ -190,88 +245,298 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // TextFields for all fields in the model
-              TextField(
-                controller: firstNameController,
-                decoration: InputDecoration(labelText: 'First Name'),
-              ),
-              TextField(
-                controller: lastNameController,
-                decoration: InputDecoration(labelText: 'Last Name'),
-              ),
-              TextField(
-                controller: middleNameController,
-                decoration: InputDecoration(labelText: 'Middle Name'),
-              ),
-              TextField(
-                controller: dateOfBirthController,
-                decoration: InputDecoration(labelText: 'Date of Birth'),
-              ),
-              TextField(
-                controller: placeOfBirthCityController,
-                decoration: InputDecoration(labelText: 'Place of Birth (City)'),
-              ),
-              TextField(
-                controller: placeOfBirthProvinceController,
-                decoration: InputDecoration(labelText: 'Place of Birth (Province)'),
-              ),
-              TextField(
-                controller: placeOfBirthCountryController,
-                decoration: InputDecoration(labelText: 'Place of Birth (Country)'),
-              ),
-              TextField(
-                controller: fatherFirstNameController,
-                decoration: InputDecoration(labelText: 'Father First Name'),
-              ),
-              TextField(
-                controller: fatherLastNameController,
-                decoration: InputDecoration(labelText: 'Father Last Name'),
-              ),
-              TextField(
-                controller: fatherMiddleNameController,
-                decoration: InputDecoration(labelText: 'Father Middle Name'),
-              ),
-              TextField(
-                controller: motherFirstNameController,
-                decoration: InputDecoration(labelText: 'Mother First Name'),
-              ),
-              TextField(
-                controller: motherLastNameController,
-                decoration: InputDecoration(labelText: 'Mother Last Name'),
-              ),
-              TextField(
-                controller: motherMiddleNameController,
-                decoration: InputDecoration(labelText: 'Mother Middle Name'),
-              ),
-              TextField(
-                controller: latitudeController,
-                decoration: InputDecoration(labelText: 'Latitude'),
-              ),
-              TextField(
-                controller: longitudeController,
-                decoration: InputDecoration(labelText: 'Longitude'),
-              ),
-              TextField(
-                controller: placeIdController,
-                decoration: InputDecoration(labelText: 'Place ID'),
-              ),
-              TextField(
-                controller: imageController,
-                decoration: InputDecoration(labelText: 'Image URL'),
-              ),
+          child:
 
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => testApi(),
-                child: Text('Submit'),
-              ),
-            ],
+          
+FormBuilder(
+  key: _formKey,
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Container(),
+      SubtitleText(title: 'Basic Information',),
+      FormBuilderTextField (
+        name: 'first_name',
+        decoration: const InputDecoration(labelText: 'First Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'last_name',
+        decoration: const InputDecoration(labelText: 'Last Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'middle_name',
+        decoration: const InputDecoration(labelText: 'Middle Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+     FormBuilderDateTimePicker(
+  name: 'date_of_birth',
+  inputType: InputType.date,
+  format: DateFormat('yyyy-MM-dd'), // Set the desired date format
+  decoration: const InputDecoration(
+    labelText: 'Date of Birth',
+  ),
+  validator: FormBuilderValidators.compose([
+    FormBuilderValidators.required(),
+  ]),
+),
+
+
+        FormBuilderTextField (
+        name: 'place_of_birth_city',
+        decoration: const InputDecoration(labelText: 'City'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+        FormBuilderTextField (
+        name: 'place_of_birth_province',
+        decoration: const InputDecoration(labelText: 'Province'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+        FormBuilderTextField (
+        name: 'place_of_birth_country',
+        decoration: const InputDecoration(labelText: 'Country'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      const Gap(10),
+        SubtitleText(title: 'Father Information',),
+        FormBuilderTextField (
+        name: 'father_first_name',
+        decoration: const InputDecoration(labelText: 'First Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'father_last_name',
+        decoration: const InputDecoration(labelText: 'Last Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'father_middle_name',
+        decoration: const InputDecoration(labelText: 'Middle Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+        const Gap(10),
+        SubtitleText(title: 'Mother Information',),
+        FormBuilderTextField (
+        name: 'mother_first_name',
+        decoration: const InputDecoration(labelText: 'First Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'mother_last_name',
+        decoration: const InputDecoration(labelText: 'Last Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+      FormBuilderTextField (
+        name: 'mother_middle_name',
+        decoration: const InputDecoration(labelText: 'Middle Name'),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          // FormBuilderValidators.email(),
+        ]),
+      ),
+
+   const Gap(10),
+   SubtitleText(title: 'Location Information',),
+   const Gap(2),
+   Text('For latitude  You must select a location abse on the map',style: TextStyle(color: Colors.grey),),
+   const Gap(10),
+   
+      FormBuilderTextField(
+  name: 'latitude',
+  decoration: const InputDecoration(labelText: 'Latitude'),
+  keyboardType: TextInputType.number, // Set the keyboard type to number
+  validator: FormBuilderValidators.compose([
+    FormBuilderValidators.required(),
+    FormBuilderValidators.numeric(), // Validate that the input is a number
+  ]),
+),
+FormBuilderTextField(
+  
+  name: 'longitude',
+  decoration: const InputDecoration(labelText: 'Longitude'),
+  keyboardType: TextInputType.number, // Set the keyboard type to number
+  validator: FormBuilderValidators.compose([
+    FormBuilderValidators.required(),
+    FormBuilderValidators.numeric(), // Validate that the input is a number
+  ]),
+),
+
+
+
+      const SizedBox(height: 10),
+      // FormBuilderTextField(
+      //   name: 'password',
+      //   decoration: const InputDecoration(labelText: 'Password'),
+      //   obscureText: true,
+      //   validator: FormBuilderValidators.compose([
+      //     FormBuilderValidators.required(),
+      //   ]),
+      // ),
+
+         const Gap(10),
+      SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: 50,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+
+            backgroundColor: Colors.blue[900]
           ),
+          onPressed: ()=> submitForm(),
+          child: Center(child: const Text('Login', style: TextStyle(color: Colors.white, fontSize: 18, ),)),
+        ),
+      )
+    ],
+  ),
+),
+          //  Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     // TextFields for all fields in the model
+          //     TextField(
+          //       controller: firstNameController,
+          //       decoration: InputDecoration(labelText: 'First Name'),
+          //     ),
+          //     TextField(
+          //       controller: lastNameController,
+          //       decoration: InputDecoration(labelText: 'Last Name'),
+          //     ),
+          //     TextField(
+          //       controller: middleNameController,
+          //       decoration: InputDecoration(labelText: 'Middle Name'),
+          //     ),
+          //     TextField(
+          //       controller: dateOfBirthController,
+          //       decoration: InputDecoration(labelText: 'Date of Birth'),
+          //     ),
+          //     TextField(
+          //       controller: placeOfBirthCityController,
+          //       decoration: InputDecoration(labelText: 'Place of Birth (City)'),
+          //     ),
+          //     TextField(
+          //       controller: placeOfBirthProvinceController,
+          //       decoration: InputDecoration(labelText: 'Place of Birth (Province)'),
+          //     ),
+          //     TextField(
+          //       controller: placeOfBirthCountryController,
+          //       decoration: InputDecoration(labelText: 'Place of Birth (Country)'),
+          //     ),
+          //     TextField(
+          //       controller: fatherFirstNameController,
+          //       decoration: InputDecoration(labelText: 'Father First Name'),
+          //     ),
+          //     TextField(
+          //       controller: fatherLastNameController,
+          //       decoration: InputDecoration(labelText: 'Father Last Name'),
+          //     ),
+          //     TextField(
+          //       controller: fatherMiddleNameController,
+          //       decoration: InputDecoration(labelText: 'Father Middle Name'),
+          //     ),
+          //     TextField(
+          //       controller: motherFirstNameController,
+          //       decoration: InputDecoration(labelText: 'Mother First Name'),
+          //     ),
+          //     TextField(
+          //       controller: motherLastNameController,
+          //       decoration: InputDecoration(labelText: 'Mother Last Name'),
+          //     ),
+          //     TextField(
+          //       controller: motherMiddleNameController,
+          //       decoration: InputDecoration(labelText: 'Mother Middle Name'),
+          //     ),
+          //     TextField(
+          //       controller: latitudeController,
+          //       decoration: InputDecoration(labelText: 'Latitude'),
+          //     ),
+          //     TextField(
+          //       controller: longitudeController,
+          //       decoration: InputDecoration(labelText: 'Longitude'),
+          //     ),
+          //     TextField(
+          //       controller: placeIdController,
+          //       decoration: InputDecoration(labelText: 'Place ID'),
+          //     ),
+          //     TextField(
+          //       controller: imageController,
+          //       decoration: InputDecoration(labelText: 'Image URL'),
+          //     ),
+
+          //     SizedBox(height: 20),
+          //     ElevatedButton(
+          //       onPressed: () => testApi(),
+          //       child: Text('Submit'),
+          //     ),
+          //   ],
+          // ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        LatLng? selectedLocationFromMap = await Get.to(()=>MapScreen());
+
+
+      print('--------------------------------');
+      print('Clicked');
+      print(selectedLocationFromMap);
+      print('--------------------------------');
+          if(selectedLocationFromMap != null) {
+              setState(() {
+                selectedLocation = selectedLocationFromMap;
+                longitudeController.text  =selectedLocationFromMap.longitude.toString();
+                latitudeController.text  =selectedLocationFromMap.latitude.toString();
+              });
+              // setLocation(selectedLocationFromMap);
+          }else{
+            print('--------------------------------');
+            print('DID NOT SELECTED LOCATION');
+            print('--------------------------------');
+          }
+
+
+      
+        // if(selectedLocationFromMap !=null){
+        //   setState(() {
+        //       selectedLocation = selectedLocationFromMap;
+        //   });
+        // }else{
+        //   print('Did Not Select Location from Map');
+        // }
+      } , child: Icon(Icons.pin_drop),),
     );
   }
 }

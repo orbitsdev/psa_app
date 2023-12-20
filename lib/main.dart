@@ -20,7 +20,7 @@ class _PSAState extends State<PSA> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  MapScreen(),
+      home:  LoginScreen(),
       getPages: [
         GetPage(name: '/login', page: ()=>  LoginScreen()),
         GetPage(name: '/map', page: ()=>  MapScreen())
