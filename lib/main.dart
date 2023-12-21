@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:psa_app/features/authentication/login/login_screen.dart';
 import 'package:psa_app/features/authentication/login/map_screen.dart';
+import 'package:psa_app/features/home_screen.dart';
 
 void main() {
   runApp(const PSA());
@@ -19,11 +21,13 @@ class _PSAState extends State<PSA> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+        builder: FToastBuilder(),
       debugShowCheckedModeBanner: false,
-      home:  LoginScreen(),
+      home:  HomeScreen(),
       getPages: [
-        GetPage(name: '/login', page: ()=>  LoginScreen()),
-        GetPage(name: '/map', page: ()=>  MapScreen())
+        GetPage(name: '/home', page: ()=>  HomeScreen(), transition: Transition.cupertino),
+        GetPage(name: '/login', page: ()=>  LoginScreen(),transition: Transition.cupertino),
+        GetPage(name: '/map', page: ()=>  MapScreen(),transition: Transition.cupertino),
       ],
 
     );

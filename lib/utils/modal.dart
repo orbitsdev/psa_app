@@ -1,22 +1,30 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Modal {
 
-   static void showErrorDialog(
-      {required BuildContext context, String message = 'Error'}) {
+  static void showSucces({String message = 'Success'}){
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        
+        // timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[600],
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
+  static void showErrorDialog({required BuildContext context, String message = 'Error'}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Center(
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Container(
-            width: 300,
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -38,7 +46,6 @@ class Modal {
                   message,
                   style: const TextStyle(
                     fontSize: 16,
-                   
                     decoration: TextDecoration.none,
                   ),
                   textAlign: TextAlign.center,
@@ -47,9 +54,7 @@ class Modal {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
-                 
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
